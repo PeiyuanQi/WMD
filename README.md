@@ -20,6 +20,4 @@ Clustered results in specified output file.
 ## Reference
 - Matt J. Kusner, Yu Sun, Nicholas I. Kolkin, and Kilian Q. Weinberger. 2015.
 [From word embeddings to document distances.](https://arxiv.org/pdf/1409.3215.pdf)
-In Proceedings of the 32nd International Conference on International Conference on Machine Learning - Volume 37 (ICML'15), 
-Francis Bach and David Blei (Eds.), Vol. 37. JMLR.org 957-966.
 - [gensim](https://radimrehurek.com/gensim/models/doc2vec.html).
