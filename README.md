@@ -20,4 +20,13 @@ Clustered results in specified output file.
 ## Reference
 - Matt J. Kusner, Yu Sun, Nicholas I. Kolkin, and Kilian Q. Weinberger. 2015.
 [From word embeddings to document distances.](https://arxiv.org/pdf/1409.3215.pdf)
-- [gensim](https://radimrehurek.com/gensim/models/doc2vec.html).
+
+    To cite using the following BibTeX entry (instead of Google Scholar): 
+    
+        @inproceedings{kusner2015doc, 
+           title={From Word Embeddings To Document Distances}, 
+           author={Kusner, M. J. and Sun, Y. and Kolkin, N. I. and Weinberger, K. Q.}, 
+           booktitle={ICML}, 
+           year={2015}, 
+        } 
+- [gensim](https://radimrehurek.com/gensim/models/keyedvectors.html).

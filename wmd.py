@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 import optparse
 from gensim.models import Doc2Vec
+from nltk.tokenize import word_tokenize
+from dijkstra import *
 
 def GetOptions():
     parser = optparse.OptionParser()
@@ -50,3 +52,7 @@ if __name__ == '__main__':
     model = Doc2Vec.load(model_dir)
     unclusted_log_list = get_log_list(logs_dir)
     cluster_id = 0
+
+    while (len(unclusted_log_list)>0):
+        cur_doc = unclusted_log_list.pop()
+        sent = word_tokenize(cur_doc)
