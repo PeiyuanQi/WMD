@@ -3,7 +3,7 @@
 This is an implementation of Wrapper for WMD (Word Move Distance) based on gensim lib in python.
 
 ## Requirement
-- Python3 and supporting packages
+- Python3 and supporting packages: Gensim, Numpy, Pandas, NLTK.
 - Trained doc2vec or word2vec model
 
 ## Usage
