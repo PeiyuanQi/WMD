@@ -85,7 +85,7 @@ if __name__ == '__main__':
     options = GetOptions()
     logs_dir = options.logdir
     model_dir = options.model
-    threshold = options.threshold
+    threshold = int(options.threshold)
     output_dir = options.outdir
 
     model = Doc2Vec.load(model_dir)
