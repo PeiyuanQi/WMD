@@ -32,6 +32,8 @@ def GetOptions():
     options, remainder = parser.parse_args()
     return options
 
+options = GetOptions()
+
 
 def get_log_list(logs_dir):
     """Get all the log file name."""
@@ -40,7 +42,7 @@ def get_log_list(logs_dir):
         log_list.append(fname)
     return log_list
 
-def start_clustering(distance_matrix, threshold, log_list, logs_num):
+def start_clustering(distance_matrix, threshold, logs_num):
     cluster_id = [-1] * logs_num
     cur_id = 0
     same_cluster_id_pair = []
@@ -68,7 +70,7 @@ def start_clustering(distance_matrix, threshold, log_list, logs_num):
 
 
 def add_error_log_column(sourceFileName,outputFileName):
-    baseLogDir = './DataSet/test/filteredlogs/'
+    baseLogDir = options.logdir
     df = pd.read_csv(sourceFileName)
     df = df.assign(errorLog=' ')
     for index, row in df.iterrows():
@@ -81,8 +83,57 @@ def add_error_log_column(sourceFileName,outputFileName):
     df.to_csv(outputFileName, sep=',')
 
 
+import matplotlib.pyplot as plt
+import networkx as nx
+
+
+def plot_weighted_graph(log_list,distance, logs_num):
+    # refer: https://qxf2.com/blog/drawing-weighted-graphs-with-networkx/
+    G = nx.Graph()  # Create a graph object called G
+    node_list = log_list
+    for node in node_list:
+        G.add_node(node)
+
+    # Note: You can also try a spring_layout
+    pos = nx.circular_layout(G)
+    nx.draw_networkx_nodes(G, pos, node_color='green', node_size=7500)
+
+    # 3. If you want, add labels to the nodes
+    labels = {}
+    for node_name in node_list:
+        labels[str(node_name)] = str(node_name)
+    nx.draw_networkx_labels(G, pos, labels, font_size=8)
+
+    # 4. Add the edges (4C2 = 6 combinations)
+    for i in range(0, logs_num):
+        for j in range(i+1,logs_num):
+            G.add_edge(node_list[i], node_list[j], weight=distance[i,j])  # Karpov vs Kasparov
+
+    all_weights = []
+    # 4 a. Iterate through the graph nodes to gather all the weights
+    for (node1, node2, data) in G.edges(data=True):
+        all_weights.append(data['weight'])  # we'll use this when determining edge thickness
+
+    # 4 b. Get unique weights
+    unique_weights = list(set(all_weights))
+
+    # 4 c. Plot the edges - one by one!
+    for weight in unique_weights:
+        # 4 d. Form a filtered list with just the weight you want to draw
+        weighted_edges = [(node1, node2) for (node1, node2, edge_attr) in G.edges(data=True) if
+                          edge_attr['weight'] == weight]
+        # 4 e. I think multiplying by [num_nodes/sum(all_weights)] makes the graphs edges look cleaner
+        width = weight * len(node_list) * 3.0 / sum(all_weights)
+        nx.draw_networkx_edges(G, pos, edgelist=weighted_edges, width=width)
+
+    # Plot the graph
+    plt.axis('off')
+    plt.title('Distance Cluster')
+    plt.savefig("wmd.png")
+
+
+
 if __name__ == '__main__':
-    options = GetOptions()
     logs_dir = options.logdir
     model_dir = options.model
     threshold = int(options.threshold)
@@ -110,15 +161,17 @@ if __name__ == '__main__':
                 print(log_list[j] + " read")
                 fi.close()
             distance[i,j] = model.wmdistance(tok_list_1,tok_list_2)
+            print("dis between i, j: " + str(distance[i,j]))
     np.save('tmp.txt',distance)
 
     print("start clustering...")
-    array_of_cluster_id = start_clustering(distance, threshold, log_list, logs_num)
+    array_of_cluster_id = start_clustering(distance, threshold, logs_num)
 
     print("formating outputs...")
     result = pd.DataFrame({'DocTag': log_list, 'ClusterId': array_of_cluster_id}, columns=['DocTag', 'ClusterId'])
     result.to_csv("medium.csv", index=False)
 
     print("saving results...")
-    add_error_log_column("medium.csv", options.output_dir)
+    add_error_log_column("medium.csv", output_dir)
+    plot_weighted_graph(log_list, distance,logs_num)
 
