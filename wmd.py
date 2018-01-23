@@ -50,6 +50,7 @@ def start_clustering(distance_matrix, threshold, logs_num):
         id_for_j = cur_id
         if (cluster_id[i] < 0):
             cluster_id[i] = cur_id
+            cur_id += 1
         else:
             id_for_j = cluster_id[i]
         for j in range(i+1, logs_num):
@@ -82,54 +83,54 @@ def add_error_log_column(sourceFileName,outputFileName):
             fi.close()
     df.to_csv(outputFileName, sep=',')
 
-
-import matplotlib.pyplot as plt
-import networkx as nx
-
-
-def plot_weighted_graph(log_list,distance, logs_num):
-    # refer: https://qxf2.com/blog/drawing-weighted-graphs-with-networkx/
-    G = nx.Graph()  # Create a graph object called G
-    node_list = log_list
-    for node in node_list:
-        G.add_node(node)
-
-    # Note: You can also try a spring_layout
-    pos = nx.circular_layout(G)
-    nx.draw_networkx_nodes(G, pos, node_color='green', node_size=7500)
-
-    # 3. If you want, add labels to the nodes
-    labels = {}
-    for node_name in node_list:
-        labels[str(node_name)] = str(node_name)
-    nx.draw_networkx_labels(G, pos, labels, font_size=8)
-
-    # 4. Add the edges (4C2 = 6 combinations)
-    for i in range(0, logs_num):
-        for j in range(i+1,logs_num):
-            G.add_edge(node_list[i], node_list[j], weight=distance[i,j])  # Karpov vs Kasparov
-
-    all_weights = []
-    # 4 a. Iterate through the graph nodes to gather all the weights
-    for (node1, node2, data) in G.edges(data=True):
-        all_weights.append(data['weight'])  # we'll use this when determining edge thickness
-
-    # 4 b. Get unique weights
-    unique_weights = list(set(all_weights))
-
-    # 4 c. Plot the edges - one by one!
-    for weight in unique_weights:
-        # 4 d. Form a filtered list with just the weight you want to draw
-        weighted_edges = [(node1, node2) for (node1, node2, edge_attr) in G.edges(data=True) if
-                          edge_attr['weight'] == weight]
-        # 4 e. I think multiplying by [num_nodes/sum(all_weights)] makes the graphs edges look cleaner
-        width = weight * len(node_list) * 3.0 / sum(all_weights)
-        nx.draw_networkx_edges(G, pos, edgelist=weighted_edges, width=width)
-
-    # Plot the graph
-    plt.axis('off')
-    plt.title('Distance Cluster')
-    plt.savefig("wmd.png")
+# ploting codes are commented out for not able to run on engineering space on cloud.
+# import matplotlib.pyplot as plt
+# import networkx as nx
+#
+#
+# def plot_weighted_graph(log_list,distance, logs_num):
+#     # refer: https://qxf2.com/blog/drawing-weighted-graphs-with-networkx/
+#     G = nx.Graph()  # Create a graph object called G
+#     node_list = log_list
+#     for node in node_list:
+#         G.add_node(node)
+#
+#     # Note: You can also try a spring_layout
+#     pos = nx.circular_layout(G)
+#     nx.draw_networkx_nodes(G, pos, node_color='green', node_size=7500)
+#
+#     # 3. If you want, add labels to the nodes
+#     labels = {}
+#     for node_name in node_list:
+#         labels[str(node_name)] = str(node_name)
+#     nx.draw_networkx_labels(G, pos, labels, font_size=8)
+#
+#     # 4. Add the edges (4C2 = 6 combinations)
+#     for i in range(0, logs_num):
+#         for j in range(i+1,logs_num):
+#             G.add_edge(node_list[i], node_list[j], weight=distance[i,j])  # Karpov vs Kasparov
+#
+#     all_weights = []
+#     # 4 a. Iterate through the graph nodes to gather all the weights
+#     for (node1, node2, data) in G.edges(data=True):
+#         all_weights.append(data['weight'])  # we'll use this when determining edge thickness
+#
+#     # 4 b. Get unique weights
+#     unique_weights = list(set(all_weights))
+#
+#     # 4 c. Plot the edges - one by one!
+#     for weight in unique_weights:
+#         # 4 d. Form a filtered list with just the weight you want to draw
+#         weighted_edges = [(node1, node2) for (node1, node2, edge_attr) in G.edges(data=True) if
+#                           edge_attr['weight'] == weight]
+#         # 4 e. I think multiplying by [num_nodes/sum(all_weights)] makes the graphs edges look cleaner
+#         width = weight * len(node_list) * 3.0 / sum(all_weights)
+#         nx.draw_networkx_edges(G, pos, edgelist=weighted_edges, width=width)
+#
+#     # Plot the graph
+#     plt.axis('off')
+#     plt.title('Distance Cluster')
+#     plt.savefig("wmd.png")
 
 
 
@@ -173,5 +174,5 @@ if __name__ == '__main__':
 
     print("saving results...")
     add_error_log_column("medium.csv", output_dir)
-    plot_weighted_graph(log_list, distance,logs_num)
+    # plot_weighted_graph(log_list, distance,logs_num)
 

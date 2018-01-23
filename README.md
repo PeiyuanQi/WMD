@@ -17,6 +17,9 @@ Run `wmd.py` with following args:
 Output:
 Clustered results in specified output file.
 
+## Time Complexity
+$\Theta(n^2)$
+
 ## Reference
 - Matt J. Kusner, Yu Sun, Nicholas I. Kolkin, and Kilian Q. Weinberger. 2015.
 [From word embeddings to document distances.](https://arxiv.org/pdf/1409.3215.pdf)
