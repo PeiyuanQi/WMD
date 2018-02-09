@@ -1,2 +1,9 @@
+# Env and IDE files
 venv
 .idea
+
+# data result samples
+Samples*/
+
+# outputs
+Outputs/
